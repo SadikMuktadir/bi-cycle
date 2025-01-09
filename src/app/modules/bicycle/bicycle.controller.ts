@@ -39,8 +39,21 @@ const getSingleBicycle = async (req: Request, res: Response) => {
     console.log(error);
   }
 };
+const deleteBicycle = async (req: Request, res: Response) => {
+  try {
+    const bicycleId = req.params.bicycleId;
+    await bicycleService.deleteBicycle(bicycleId);
+    res.send({
+      success: true,
+      message: "Bicycles deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 export const bicycleController = {
   createBicycle,
   getBicycle,
   getSingleBicycle,
+  deleteBicycle,
 };
