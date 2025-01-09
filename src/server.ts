@@ -6,7 +6,7 @@ async function server() {
   try {
     await mongoose.connect(config.database_url as string);
     app.listen(config.port, () => {
-      console.log(`Server  is running at ${config.port}`);
+      console.log(`By-cycle server is runnig at ${config.port}`);
     });
   } catch (error) {
     console.log(error);
