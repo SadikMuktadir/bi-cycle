@@ -42,3 +42,15 @@ This is a TypeScript-based Express application integrated with MongoDB and Mongo
    ```bash
    git clone https://github.com/yourusername/bicycle-store.git
    cd bicycle-store
+2. **Install dependencies:**:
+   ```bash
+   npm install
+3. **Configure environment variables: Create a .env file in the root directory and add the following:**:
+   ```bash
+   MONGO_URI=mongodb://localhost:27017/bicycle-store
+   PORT=3000
+4. **Run the application:**:
+   ```bash
+   npm run dev
+
+
