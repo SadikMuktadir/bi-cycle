@@ -91,13 +91,13 @@ const deleteBicycle = async (req: Request, res: Response) => {
     await bicycleService.deleteBicycle(productId);
     res.send({
       success: true,
-      message: "Bicycles deleted successfully",
+      message: "Bicycle deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting bicycle:", error);
     res.status(500).send({
       success: false,
-      message: "An error occurred while updating the bicycle",
+      message: "An error occurred while deleting the bicycle",
       error: error,
     });
   }
