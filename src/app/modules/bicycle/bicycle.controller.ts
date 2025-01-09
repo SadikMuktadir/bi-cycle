@@ -28,10 +28,11 @@ const getBicycle = async (req: Request, res: Response) => {
 };
 const getSingleBicycle = async (req: Request, res: Response) => {
   try {
-    const result = await bicycleService.getBicycle();
+    const bicycleId = req.params.bicycleId;
+    const result = await bicycleService.getSingleBicycle(bicycleId);
     res.send({
       success: true,
-      message: "Bicycles retrieved successfully",
+      message: "Single Bicycles retrieved successfully",
       data: result,
     });
   } catch (error) {
@@ -41,4 +42,5 @@ const getSingleBicycle = async (req: Request, res: Response) => {
 export const bicycleController = {
   createBicycle,
   getBicycle,
+  getSingleBicycle,
 };
