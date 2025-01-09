@@ -5,13 +5,18 @@ const createOrder = async (req: Request, res: Response) => {
   try {
     const payload = req.body;
     const result = await orderService.createOrder(payload);
-    res.send({
+    res.status(201).send({
       success: true,
       message: "Order created successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error creating order:", error);
+    res.status(500).send({
+      success: false,
+      message: "An error occurred while creating the order",
+      error: error,
+    });
   }
 };
 const calculateRevenue = async (req: Request, res: Response) => {
@@ -22,10 +27,10 @@ const calculateRevenue = async (req: Request, res: Response) => {
       totalRevenue,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       success: false,
       message: "An error occurred while calculating revenue",
+      error: error,
     });
   }
 };

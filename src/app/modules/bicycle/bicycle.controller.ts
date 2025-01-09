@@ -5,13 +5,18 @@ const createBicycle = async (req: Request, res: Response) => {
   try {
     const payload = req.body;
     const result = await bicycleService.createUser(payload);
-    res.send({
+    res.status(201).send({
       success: true,
       message: "Bicycle created successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error creating bicycle:", error);
+    res.status(500).send({
+      success: false,
+      message: "An error occurred while creating the bicycle",
+      error: error,
+    });
   }
 };
 const getBicycle = async (req: Request, res: Response) => {
@@ -23,20 +28,36 @@ const getBicycle = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error retrieving bicycles:", error);
+    res.status(500).send({
+      success: false,
+      message: "An error occurred while retrieving bicycles",
+      error: error,
+    });
   }
 };
 const getSingleBicycle = async (req: Request, res: Response) => {
   try {
     const productId = req.params.productId;
     const result = await bicycleService.getSingleBicycle(productId);
+    if (!result) {
+      return res.status(404).send({
+        success: false,
+        message: "Bicycle not found",
+      });
+    }
     res.send({
       success: true,
-      message: "Single Bicycles retrieved successfully",
+      message: "Single Bicycle retrieved successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error retrieving single bicycle:", error);
+    res.status(500).send({
+      success: false,
+      message: "An error occurred while retrieving the bicycle",
+      error: error,
+    });
   }
 };
 const updateBicycle = async (req: Request, res: Response) => {
@@ -44,13 +65,24 @@ const updateBicycle = async (req: Request, res: Response) => {
     const productId = req.params.productId;
     const body = req.body;
     const result = await bicycleService.updateBicycle(productId, body);
+    if (!result) {
+      return res.status(404).send({
+        success: false,
+        message: "Bicycle not found to update",
+      });
+    }
     res.send({
       success: true,
-      message: "Single Bicycles retrieved successfully",
+      message: "Bicycle updated successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error updating bicycle:", error);
+    res.status(500).send({
+      success: false,
+      message: "An error occurred while updating the bicycle",
+      error: error,
+    });
   }
 };
 const deleteBicycle = async (req: Request, res: Response) => {
@@ -62,7 +94,12 @@ const deleteBicycle = async (req: Request, res: Response) => {
       message: "Bicycles deleted successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error deleting bicycle:", error);
+    res.status(500).send({
+      success: false,
+      message: "An error occurred while updating the bicycle",
+      error: error,
+    });
   }
 };
 export const bicycleController = {
