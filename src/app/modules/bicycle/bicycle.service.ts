@@ -1,5 +1,5 @@
-import { IBicycle } from "./bicycle.interface";
-import Bicycle from "./bicycle.model";
+import { IBicycle } from './bicycle.interface';
+import Bicycle from './bicycle.model';
 
 const createUser = async (payload: IBicycle): Promise<IBicycle> => {
   const result = await Bicycle.create(payload);

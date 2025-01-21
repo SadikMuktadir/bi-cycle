@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
-import { orderService } from "./order.service";
+/* eslint-disable no-console */
+import { Request, Response } from 'express';
+import { orderService } from './order.service';
 
 const createOrder = async (req: Request, res: Response) => {
   try {
@@ -7,14 +8,14 @@ const createOrder = async (req: Request, res: Response) => {
     const result = await orderService.createOrder(payload);
     res.status(201).send({
       success: true,
-      message: "Order created successfully",
+      message: 'Order created successfully',
       data: result,
     });
   } catch (error) {
-    console.error("Error creating order:", error);
+    console.error('Error creating order:', error);
     res.status(500).send({
       success: false,
-      message: "An error occurred while creating the order",
+      message: 'An error occurred while creating the order',
       error: error,
     });
   }
@@ -29,7 +30,7 @@ const calculateRevenue = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "An error occurred while calculating revenue",
+      message: 'An error occurred while calculating revenue',
       error: error,
     });
   }
