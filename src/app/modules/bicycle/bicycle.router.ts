@@ -2,9 +2,9 @@ import { Router } from 'express';
 import { bicycleController } from './bicycle.controller';
 
 const bicycleRouter = Router();
-bicycleRouter.post('/products', bicycleController.createBicycle);
-bicycleRouter.get('/products', bicycleController.getBicycle);
-bicycleRouter.get('/products/:productId', bicycleController.getSingleBicycle);
-bicycleRouter.patch('/products/:productId', bicycleController.updateBicycle);
-bicycleRouter.delete('/products/:productId', bicycleController.deleteBicycle);
+bicycleRouter.post('/', bicycleController.createBicycle);
+bicycleRouter.get('/', bicycleController.getBicycle);
+bicycleRouter.get('/:productId', bicycleController.getSingleBicycle);
+bicycleRouter.patch('/:productId', bicycleController.updateBicycle);
+bicycleRouter.delete('/:productId', bicycleController.deleteBicycle);
 export default bicycleRouter;

@@ -1,15 +1,22 @@
 import express, { Request, Response } from 'express';
 import config from './app/config';
-import bicycleRouter from './app/modules/bicycle/bicycle.router';
-import orderRouter from './app/modules/order/order.router';
+import globalErrorHandler from './app/middlewares/globalErrorhandler';
+import notFound from './app/middlewares/notFound';
+import router from './app/routes';
 const app = express();
 app.use(express.json());
-app.use('/api', bicycleRouter);
-app.use('/api', orderRouter);
+app.use('/api', router);
+
 app.get('/', (req: Request, res: Response) => {
   res.send({
     status: true,
-    message: `By-cycle server is runnig at ${config.port}`,
+    message: `Bicycle website server is runnig at ${config.port}`,
   });
 });
+
+app.use(globalErrorHandler);
+
+//Not Found
+app.use(notFound);
+
 export default app;
