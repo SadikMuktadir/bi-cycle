@@ -7,10 +7,12 @@ const createUser = async (req: Request, res: Response) => {
   const result = await userServices.createUser(payload);
 
   const responseData = {
-    _id: result._id,
-    name: result.name,
-    email: result.email,
+    _id: result.user._id,
+    name: result.user.name,
+    email: result.user.email,
+    accessToken: result.token,
   };
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -18,6 +20,7 @@ const createUser = async (req: Request, res: Response) => {
     data: responseData,
   });
 };
+
 const getUser = async (req: Request, res: Response) => {
   const result = await userServices.getUser();
   sendResponse(res, {

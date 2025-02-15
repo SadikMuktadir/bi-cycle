@@ -1,10 +1,26 @@
+import config from '../../config';
 import { IUser } from './user.interface';
 import User from './user.model';
+import jwt from 'jsonwebtoken';
+const createUser = async (
+  payload: IUser,
+): Promise<{ user: IUser; token: string }> => {
+  const user = await User.create(payload);
+  const JwtPayload = {
+    email: user.email,
+    role: user.role,
+  };
 
-const createUser = async (payload: IUser): Promise<IUser> => {
-  const result = await User.create(payload);
-  return result;
+  const accessToken = jwt.sign(JwtPayload, config.JWT_SECRET_TOKEN as string, {
+    expiresIn: '10d',
+  });
+
+  return {
+    user,
+    token: accessToken,
+  };
 };
+
 const getUser = async () => {
   const result = await User.find();
   return result;
