@@ -1,3 +1,4 @@
+import QueryBuilder from '../../../builder/querybuilder';
 import { IBicycle } from './bicycle.interface';
 import Bicycle from './bicycle.model';
 
@@ -5,8 +6,13 @@ const createUser = async (payload: IBicycle): Promise<IBicycle> => {
   const result = await Bicycle.create(payload);
   return result;
 };
-const getBicycle = async () => {
-  const result = await Bicycle.find();
+const getBicycle = async (query: Record<string, unknown>) => {
+  const searchableFields = ['name', 'brand'];
+  const biCycles = new QueryBuilder(Bicycle.find(), query).search(
+    searchableFields,
+  );
+
+  const result = await biCycles.modelQuery;
   return result;
 };
 const getSingleBicycle = async (id: string) => {

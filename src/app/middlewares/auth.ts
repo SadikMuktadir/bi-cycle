@@ -13,21 +13,17 @@ const auth = (...requiredRoles: TUserRole[]) => {
     if (!token) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
     }
-
-    // checking if the given token is valid
     const decoded = jwt.verify(
       token,
       config.JWT_SECRET_TOKEN as string,
     ) as JwtPayload;
     const { role, email } = decoded;
 
-    // checking if the user is exist
     const user = await User.isUserExist(email);
 
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
     }
-    // checking if the user is already deleted
 
     const isBlocked = user?.isBlocked;
 

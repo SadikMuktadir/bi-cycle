@@ -22,7 +22,7 @@ const createBicycle = async (req: Request, res: Response) => {
 };
 const getBicycle = async (req: Request, res: Response) => {
   try {
-    const result = await bicycleService.getBicycle();
+    const result = await bicycleService.getBicycle(req.query);
     res.send({
       success: true,
       message: 'Bicycles retrieved successfully',
