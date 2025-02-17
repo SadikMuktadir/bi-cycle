@@ -26,7 +26,7 @@ const userSchema = new Schema<IUser, UserModel>(
       type: String,
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters long'],
-      select: false,
+      select: 0,
     },
     role: {
       type: String,
@@ -57,7 +57,7 @@ userSchema.post('save', function (doc, next) {
 });
 
 userSchema.statics.isUserExist = async function (email: string) {
-  return await User.findOne({ email });
+  return await User.findOne({ email }).select('+password');
 };
 userSchema.statics.isPasswordMatched = async function (
   plainText,
