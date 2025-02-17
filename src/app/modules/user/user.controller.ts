@@ -1,24 +1,28 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { userServices } from './user.service';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
-const createUser = async (req: Request, res: Response) => {
-  const payload = req.body;
-  const result = await userServices.createUser(payload);
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const payload = req.body;
+    const result = await userServices.createUser(payload);
 
-  const responseData = {
-    _id: result.user._id,
-    name: result.user.name,
-    email: result.user.email,
-    accessToken: result.token,
-  };
+    const responseData = {
+      _id: result.user._id,
+      name: result.user.name,
+      email: result.user.email,
+      accessToken: result.token,
+    };
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'User registered successfully',
-    data: responseData,
-  });
+    sendResponse(res, {
+      statusCode: httpStatus.CREATED,
+      success: true,
+      message: 'User registered successfully',
+      data: responseData,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getUser = async (req: Request, res: Response) => {
