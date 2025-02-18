@@ -11,7 +11,7 @@ const createUser = async (
     role: user.role,
   };
 
-  const accessToken = jwt.sign(JwtPayload, config.JWT_SECRET_TOKEN as string, {
+  const accessToken = jwt.sign(JwtPayload, config.JWT_ACCESS_TOKEN as string, {
     expiresIn: '10d',
   });
 

@@ -1,4 +1,4 @@
-import QueryBuilder from '../../../builder/querybuilder';
+import QueryBuilder from '../../builder/querybuilder';
 import { IBicycle } from './bicycle.interface';
 import Bicycle from './bicycle.model';
 
