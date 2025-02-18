@@ -8,10 +8,12 @@ const createUser = async (payload: IBicycle): Promise<IBicycle> => {
 };
 const getBicycle = async (query: Record<string, unknown>) => {
   const searchableFields = ['name', 'brand'];
-  const biCycles = new QueryBuilder(Bicycle.find(), query).search(
-    searchableFields,
-  );
-
+  const biCycles = new QueryBuilder(Bicycle.find(), query)
+    .search(searchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
   const result = await biCycles.modelQuery;
   return result;
 };
