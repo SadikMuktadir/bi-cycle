@@ -9,6 +9,11 @@ orderRouter.post(
   auth(USER_ROLE.admin, USER_ROLE.user),
   orderController.createOrder,
 );
+orderRouter.get(
+  '/verify',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  orderController.verifyPayment,
+);
 orderRouter.get('/', orderController.getOrder);
 orderRouter.get('/revenue', orderController.calculateRevenue);
 export default orderRouter;

@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import AppError from '../../errors/AppError';
 import Bicycle from '../bicycle/bicycle.model';
 import Order from './order.model';
@@ -49,26 +48,26 @@ const createOrder = async (
   };
   const payment = await orderUtils.makePayment(shurjopayPayload);
 
-  // if (payment?.transactionStatus) {
-  //   const updatedOrder = await Order.findByIdAndUpdate(
-  //     order._id,
-  //     {
-  //       transaction: {
-  //         id: payment.sp_order_id,
-  //         transactionStatus: payment.transactionStatus,
-  //       },
-  //     },
-  //     { new: true }, // Ensures the updated document is returned
-  //   );
+  if (payment?.transactionStatus) {
+    const updatedOrder = await Order.findByIdAndUpdate(
+      order._id,
+      {
+        transaction: {
+          id: payment.sp_order_id,
+          transactionStatus: payment.transactionStatus,
+        },
+      },
+      { new: true }, // Ensures the updated document is returned
+    );
 
-  //   if (!updatedOrder) {
-  //     throw new AppError(httpStatus.NOT_FOUND, 'Order not found after update.');
-  //   }
+    if (!updatedOrder) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Order not found after update.');
+    }
 
-  //   order = updatedOrder; // Now TypeScript knows it's not null
-  // }
+    order = updatedOrder; // Now TypeScript knows it's not null
+  }
 
-  return { order, payment };
+  return payment;
 };
 
 const calculateTotalRevenue = async (): Promise<number> => {
@@ -88,9 +87,38 @@ const getOrder = async () => {
   const result = await Order.find().populate('user');
   return result;
 };
+const verifyPayment = async (order_id: string) => {
+  const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id);
 
+  if (verifiedPayment.length) {
+    await Order.findOneAndUpdate(
+      {
+        'transaction.id': order_id,
+      },
+      {
+        'transaction.bank_status': verifiedPayment[0].bank_status,
+        'transaction.sp_code': verifiedPayment[0].sp_code,
+        'transaction.sp_message': verifiedPayment[0].sp_message,
+        'transaction.transactionStatus': verifiedPayment[0].transaction_status,
+        'transaction.method': verifiedPayment[0].method,
+        'transaction.date_time': verifiedPayment[0].date_time,
+        status:
+          verifiedPayment[0].bank_status == 'Success'
+            ? 'Paid'
+            : verifiedPayment[0].bank_status == 'Failed'
+              ? 'Pending'
+              : verifiedPayment[0].bank_status == 'Cancel'
+                ? 'Cancelled'
+                : '',
+      },
+    );
+  }
+
+  return verifiedPayment;
+};
 export const orderService = {
   createOrder,
   getOrder,
   calculateTotalRevenue,
+  verifyPayment,
 };

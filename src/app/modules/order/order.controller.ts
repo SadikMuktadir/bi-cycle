@@ -30,12 +30,24 @@ const calculateRevenue = async (req: Request, res: Response) => {
     statusCode: httpStatus.CREATED,
     message: 'Order placed successfully',
     data: totalRevenue,
-    success: false,
+    success: true,
   });
 };
+
+const verifyPayment = catchAsync(async (req, res) => {
+  const order = await orderService.verifyPayment(req.query.order_id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    message: 'Order verified successfully',
+    data: order,
+    success: true,
+  });
+});
 
 export const orderController = {
   createOrder,
   getOrder,
   calculateRevenue,
+  verifyPayment,
 };
