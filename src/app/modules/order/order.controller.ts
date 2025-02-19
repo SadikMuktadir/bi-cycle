@@ -1,41 +1,41 @@
-/* eslint-disable no-console */
-import { Request, Response } from 'express';
+import httpStatus from 'http-status';
+import catchAsync from '../../utils/catchAsync';
 import { orderService } from './order.service';
+import sendResponse from '../../utils/sendResponse';
+import { Request, Response } from 'express';
+const createOrder = catchAsync(async (req, res) => {
+  const user = req.user;
+  const order = await orderService.createOrder(user, req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    message: 'Order placed successfully',
+    data: order,
+    success: true,
+  });
+});
 
-const createOrder = async (req: Request, res: Response) => {
-  try {
-    const payload = req.body;
-    const result = await orderService.createOrder(payload);
-    res.status(201).send({
-      success: true,
-      message: 'Order created successfully',
-      data: result,
-    });
-  } catch (error) {
-    console.error('Error creating order:', error);
-    res.status(500).send({
-      success: false,
-      message: 'An error occurred while creating the order',
-      error: error,
-    });
-  }
+const getOrder = async (req: Request, res: Response) => {
+  const result = await orderService.getOrder();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Order retrived successfully',
+    data: result,
+  });
 };
+
 const calculateRevenue = async (req: Request, res: Response) => {
-  try {
-    const totalRevenue = await orderService.calculateTotalRevenue();
-    res.send({
-      success: true,
-      totalRevenue,
-    });
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: 'An error occurred while calculating revenue',
-      error: error,
-    });
-  }
+  const totalRevenue = await orderService.calculateTotalRevenue();
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    message: 'Order placed successfully',
+    data: totalRevenue,
+    success: false,
+  });
 };
+
 export const orderController = {
   createOrder,
+  getOrder,
   calculateRevenue,
 };

@@ -1,32 +1,36 @@
-import { model, Schema } from 'mongoose';
-import { IOrder } from './order.interface';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
-const orderSchema = new Schema<IOrder>(
+export interface IOrderProduct {
+  product: mongoose.Types.ObjectId; // Reference to Bicycle model
+  quantity: number;
+}
+
+export interface IOrder extends Document {
+  user: mongoose.Types.ObjectId; // Reference to User model
+  products: IOrderProduct[]; // List of products in the order
+  totalPrice: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+const OrderSchema: Schema = new Schema(
   {
-    email: {
-      type: String,
-      required: [true, 'Email is required'],
-      trim: true,
-      lowercase: true,
-      match: [/\S+@\S+\.\S+/, 'Email is not valid'],
-    },
-    product: {
-      type: Schema.Types.ObjectId,
-      ref: 'Bicycle',
-      required: [true, 'Product is required'],
-    },
-    quantity: {
-      type: Number,
-      required: [true, 'Quantity is required'],
-      min: [1, 'Quantity must be at least 1'],
-    },
-    totalPrice: {
-      type: Number,
-      required: [true, 'Total price is required'],
-      min: [0, 'Total price must be a positive number'],
-    },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    products: [
+      {
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Bicycle',
+          required: true,
+        },
+        quantity: { type: Number, required: true, min: 1 },
+      },
+    ],
+    totalPrice: { type: Number, required: true, min: 0 },
   },
-  { timestamps: true },
+  { timestamps: true }, // Adds createdAt & updatedAt automatically
 );
-const Order = model<IOrder>('Order', orderSchema);
+
+const Order: Model<IOrder> = mongoose.model<IOrder>('Order', OrderSchema);
+
 export default Order;

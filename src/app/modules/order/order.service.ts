@@ -1,23 +1,45 @@
+import { Types } from 'mongoose';
+import AppError from '../../errors/AppError';
 import Bicycle from '../bicycle/bicycle.model';
-import { IOrder } from './order.interface';
-import Order from './order.model';
+import Order, { IOrder } from './order.model';
+import httpStatus from 'http-status';
+export interface ICreateOrderPayload {
+  products: { product: string; quantity: number }[];
+}
 
-const createOrder = async (payload: IOrder): Promise<IOrder> => {
-  const bicycle = await Bicycle.findById(payload.product);
-
-  if (!bicycle) {
-    throw new Error('Product not found');
+const createOrder = async (
+  userId: Types.ObjectId,
+  payload: ICreateOrderPayload,
+): Promise<IOrder> => {
+  if (!payload?.products?.length) {
+    throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Order is not specified');
   }
 
-  if (bicycle.quantity <= 0) {
-    throw new Error('Product is out of stock');
-  }
+  let totalPrice = 0;
+  const productDetails = await Promise.all(
+    payload.products.map(async (item) => {
+      const product = await Bicycle.findById(item.product);
+      if (!product) {
+        throw new AppError(
+          httpStatus.NOT_FOUND,
+          `Product not found: ${item.product}`,
+        );
+      }
 
-  const result = await Order.create(payload);
-  bicycle.quantity -= payload.quantity;
-  await bicycle.save();
+      const subtotal = (product.price || 0) * item.quantity;
+      totalPrice += subtotal;
 
-  return result;
+      return { product: product._id, quantity: item.quantity };
+    }),
+  );
+
+  const order = await Order.create({
+    user: userId,
+    products: productDetails,
+    totalPrice,
+  });
+
+  return order;
 };
 
 const calculateTotalRevenue = async (): Promise<number> => {
@@ -33,8 +55,13 @@ const calculateTotalRevenue = async (): Promise<number> => {
   const result = await Order.aggregate(pipeline).exec();
   return result[0]?.totalRevenue || 0;
 };
+const getOrder = async () => {
+  const result = await Order.find().populate('user');
+  return result;
+};
 
 export const orderService = {
   createOrder,
+  getOrder,
   calculateTotalRevenue,
 };

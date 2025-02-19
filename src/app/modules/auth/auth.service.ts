@@ -28,9 +28,13 @@ const loginUser = async (payload: TLoginUser) => {
 };
 const changePassword = async (
   userData: JwtPayload,
-  payload: { oldPassword: string; newPassword: string },
+  payload: {
+    email: string;
+    oldPassword: string;
+    newPassword: string;
+  },
 ) => {
-  const user = await User.isUserExist(userData?.email);
+  const user = await User.isUserExist(payload?.email);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');

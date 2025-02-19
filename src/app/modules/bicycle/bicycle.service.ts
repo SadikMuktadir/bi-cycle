@@ -2,7 +2,7 @@ import QueryBuilder from '../../builder/querybuilder';
 import { IBicycle } from './bicycle.interface';
 import Bicycle from './bicycle.model';
 
-const createUser = async (payload: IBicycle): Promise<IBicycle> => {
+const createBicycle = async (payload: IBicycle): Promise<IBicycle> => {
   const result = await Bicycle.create(payload);
   return result;
 };
@@ -30,7 +30,7 @@ const deleteBicycle = async (id: string) => {
   return result;
 };
 export const bicycleService = {
-  createUser,
+  createBicycle,
   getBicycle,
   getSingleBicycle,
   updateBicycle,

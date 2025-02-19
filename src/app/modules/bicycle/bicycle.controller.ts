@@ -5,7 +5,7 @@ import { bicycleService } from './bicycle.service';
 const createBicycle = async (req: Request, res: Response) => {
   try {
     const payload = req.body;
-    const result = await bicycleService.createUser(payload);
+    const result = await bicycleService.createBicycle(payload);
     res.status(201).send({
       success: true,
       message: 'Bicycle created successfully',

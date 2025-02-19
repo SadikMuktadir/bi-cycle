@@ -11,7 +11,7 @@ userRouter.post(
   validateRequest(userValidation.userSchema),
   userController.createUser,
 );
-userRouter.get('/', auth(USER_ROLE.admin), userController.getUser);
+userRouter.get('/', userController.getUser);
 userRouter.get('/:userId', auth(USER_ROLE.admin), userController.getSingleUser);
 userRouter.patch('/:userId', auth(USER_ROLE.admin), userController.updateUser);
 userRouter.delete('/:userId', auth(USER_ROLE.admin), userController.deleteUser);
