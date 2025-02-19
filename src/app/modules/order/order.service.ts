@@ -1,8 +1,9 @@
 import { Types } from 'mongoose';
 import AppError from '../../errors/AppError';
 import Bicycle from '../bicycle/bicycle.model';
-import Order, { IOrder } from './order.model';
+import Order from './order.model';
 import httpStatus from 'http-status';
+import { IOrder } from './order.interface';
 export interface ICreateOrderPayload {
   products: { product: string; quantity: number }[];
 }

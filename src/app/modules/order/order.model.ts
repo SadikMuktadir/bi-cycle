@@ -1,17 +1,5 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
-
-export interface IOrderProduct {
-  product: mongoose.Types.ObjectId; // Reference to Bicycle model
-  quantity: number;
-}
-
-export interface IOrder extends Document {
-  user: mongoose.Types.ObjectId; // Reference to User model
-  products: IOrderProduct[]; // List of products in the order
-  totalPrice: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import mongoose, { Schema, Model } from 'mongoose';
+import { IOrder } from './order.interface';
 
 const OrderSchema: Schema = new Schema(
   {
@@ -27,8 +15,22 @@ const OrderSchema: Schema = new Schema(
       },
     ],
     totalPrice: { type: Number, required: true, min: 0 },
+    status: {
+      type: String,
+      enum: ['Pending', 'Paid', 'Shipped', 'Completed', 'Cancelled'],
+      default: 'Pending',
+    },
+    transaction: {
+      id: String,
+      transactionStatus: String,
+      bank_status: String,
+      sp_code: String,
+      sp_message: String,
+      method: String,
+      date_time: String,
+    },
   },
-  { timestamps: true }, // Adds createdAt & updatedAt automatically
+  { timestamps: true },
 );
 
 const Order: Model<IOrder> = mongoose.model<IOrder>('Order', OrderSchema);
