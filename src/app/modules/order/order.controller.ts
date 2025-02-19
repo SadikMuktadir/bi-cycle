@@ -5,7 +5,7 @@ import sendResponse from '../../utils/sendResponse';
 import { Request, Response } from 'express';
 const createOrder = catchAsync(async (req, res) => {
   const user = req.user;
-  const order = await orderService.createOrder(user, req.body);
+  const order = await orderService.createOrder(user, req.body, req.ip!);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     message: 'Order placed successfully',

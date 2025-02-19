@@ -1,46 +1,74 @@
-import { Types } from 'mongoose';
+/* eslint-disable prefer-const */
 import AppError from '../../errors/AppError';
 import Bicycle from '../bicycle/bicycle.model';
 import Order from './order.model';
 import httpStatus from 'http-status';
-import { IOrder } from './order.interface';
-export interface ICreateOrderPayload {
-  products: { product: string; quantity: number }[];
-}
-
+import { IUser } from '../user/user.interface';
+import { orderUtils } from './order.utils';
 const createOrder = async (
-  userId: Types.ObjectId,
-  payload: ICreateOrderPayload,
-): Promise<IOrder> => {
-  if (!payload?.products?.length) {
+  user: IUser,
+  payload: { products: { product: string; quantity: number }[] },
+  client_ip: string,
+) => {
+  if (!payload?.products?.length)
     throw new AppError(httpStatus.NOT_ACCEPTABLE, 'Order is not specified');
-  }
 
   let totalPrice = 0;
-  const productDetails = await Promise.all(
-    payload.products.map(async (item) => {
-      const product = await Bicycle.findById(item.product);
-      if (!product) {
-        throw new AppError(
-          httpStatus.NOT_FOUND,
-          `Product not found: ${item.product}`,
-        );
-      }
+  const productDetails = (
+    await Promise.all(
+      payload.products.map(async (item) => {
+        const product = await Bicycle.findById(item.product);
+        if (!product) {
+          throw new AppError(
+            httpStatus.NOT_FOUND,
+            `Product not found: ${item.product}`,
+          );
+        }
+        totalPrice += (product.price || 0) * item.quantity;
+        return { product: product._id, quantity: item.quantity };
+      }),
+    )
+  ).filter(Boolean);
 
-      const subtotal = (product.price || 0) * item.quantity;
-      totalPrice += subtotal;
-
-      return { product: product._id, quantity: item.quantity };
-    }),
-  );
-
-  const order = await Order.create({
-    user: userId,
+  let order = await Order.create({
+    user: user._id,
     products: productDetails,
     totalPrice,
   });
 
-  return order;
+  const shurjopayPayload = {
+    amount: totalPrice,
+    order_id: order._id,
+    currency: 'BDT',
+    customer_name: user.name,
+    customer_address: user.address,
+    customer_email: user.email,
+    customer_phone: user.phone,
+    customer_city: user.city,
+    client_ip,
+  };
+  const payment = await orderUtils.makePayment(shurjopayPayload);
+
+  // if (payment?.transactionStatus) {
+  //   const updatedOrder = await Order.findByIdAndUpdate(
+  //     order._id,
+  //     {
+  //       transaction: {
+  //         id: payment.sp_order_id,
+  //         transactionStatus: payment.transactionStatus,
+  //       },
+  //     },
+  //     { new: true }, // Ensures the updated document is returned
+  //   );
+
+  //   if (!updatedOrder) {
+  //     throw new AppError(httpStatus.NOT_FOUND, 'Order not found after update.');
+  //   }
+
+  //   order = updatedOrder; // Now TypeScript knows it's not null
+  // }
+
+  return { order, payment };
 };
 
 const calculateTotalRevenue = async (): Promise<number> => {

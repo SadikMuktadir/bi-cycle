@@ -11,6 +11,9 @@ const userSchema = new Schema<IUser, UserModel>(
       minlength: [3, 'Name must be at least 3 characters long'],
       maxlength: [50, 'Name must be less than 50 characters long'],
     },
+    phone: { type: String, default: 'N/A' },
+    address: { type: String, default: 'N/A' },
+    city: { type: String, default: 'N/A' },
     email: {
       type: String,
       required: [true, 'Email is required'],

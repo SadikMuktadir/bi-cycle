@@ -11,6 +11,9 @@ export interface IUser {
   password: string;
   role: 'admin' | 'user';
   isBlocked: boolean;
+  phone?: string;
+  address?: string;
+  city?: string;
 }
 export interface UserModel extends Model<IUser> {
   isUserExist(email: string): Promise<IUser>;
