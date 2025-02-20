@@ -9,6 +9,7 @@ const bicycleSchema = new Schema<IBicycle>(
       trim: true,
       minlength: [2, 'Name must be at least 2 characters long'],
     },
+    imageUrl: { type: String },
     brand: {
       type: String,
       required: [true, 'Brand is required'],
