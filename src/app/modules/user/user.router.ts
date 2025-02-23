@@ -2,8 +2,6 @@ import { Router } from 'express';
 import { userValidation } from './user.validation';
 import { userController } from './user.controller';
 import { validateRequest } from '../../middlewares/validateRequest';
-import auth from '../../middlewares/auth';
-import { USER_ROLE } from './user.constant';
 
 const userRouter = Router();
 userRouter.post(
@@ -12,7 +10,7 @@ userRouter.post(
   userController.createUser,
 );
 userRouter.get('/', userController.getUser);
-userRouter.get('/:userId', auth(USER_ROLE.admin), userController.getSingleUser);
-userRouter.patch('/:userId', auth(USER_ROLE.admin), userController.updateUser);
-userRouter.delete('/:userId', auth(USER_ROLE.admin), userController.deleteUser);
+userRouter.get('/:userId', userController.getSingleUser);
+userRouter.patch('/:userId', userController.updateUser);
+userRouter.delete('/:userId', userController.deleteUser);
 export default userRouter;
